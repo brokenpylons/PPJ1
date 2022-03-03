@@ -1,17 +1,28 @@
-onexit() {
-    rm -f pipe
-}
-trap onexit EXIT
-if [[ ! -p pipe ]]; then
-    mkfifo pipe
-fi
-
+#!/bin/bash
 pwd
-cat - <<<"INPUT" >pipe &
-output=$(./run.sh pipe)
-cat - <<<"$output"
 
-if [[ "$output" != "ANSWERINPUT" ]]
-then
-    exit 1
-fi
+newline() {
+    echo -e "\n"
+}
+
+declare -r path=$(dirname $(realpath "$0"))
+
+declare -i err=0
+
+for file in "$path"/examples/example{3..100}.txt
+do
+    echo "$file"
+    declare output=$(./run.sh "$file")
+    declare tokens="${file%.*}.tokens"
+
+    if [[ "$output" == $(cat "$tokens") ]]
+    then
+        echo "[OK]"
+    else
+        wdiff <(cat - <<<"$output") "$tokens"
+        newline
+        ((err++))
+    fi
+done
+
+echo $err
