@@ -12,6 +12,7 @@ declare -i err=0
 for file in "$path"/examples/example{3..100}.txt
 do
     echo "$file"
+    cat "$file"
     declare output=$(./run.sh "$file")
     declare tokens="${file%.*}.tokens"
 
