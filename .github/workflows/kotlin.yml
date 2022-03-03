@@ -17,6 +17,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      
+      - name: Install wdiff
+        run: sudo apt-get install -y wdiff
 
       - name: Build
         run: gradle build
